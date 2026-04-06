@@ -25,6 +25,7 @@ const App = () => (
           <Route path="/ai-recommend" element={<AIRecommend />} />
           <Route path="/tailors" element={<TailorFinder />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
