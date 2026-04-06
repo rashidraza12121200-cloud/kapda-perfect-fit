@@ -6,7 +6,7 @@ const navItems = [
   { path: "/ai-recommend", icon: Sparkles, label: "AI Fit" },
   { path: "/tailors", icon: Search, label: "Tailors" },
   { path: "/cart", icon: ShoppingCart, label: "Cart" },
-  { path: "#", icon: User, label: "Profile" },
+  { path: "/profile", icon: User, label: "Profile" },
 ];
 
 const BottomNav = () => {
