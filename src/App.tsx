@@ -8,6 +8,7 @@ import ProductPage from "./pages/ProductPage";
 import AIRecommend from "./pages/AIRecommend";
 import TailorFinder from "./pages/TailorFinder";
 import Cart from "./pages/Cart";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/ai-recommend" element={<AIRecommend />} />
           <Route path="/tailors" element={<TailorFinder />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
