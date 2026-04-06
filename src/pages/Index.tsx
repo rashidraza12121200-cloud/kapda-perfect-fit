@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
@@ -7,6 +8,13 @@ import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.category.toLowerCase().includes(search.toLowerCase()) ||
+    p.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background pb-20">
