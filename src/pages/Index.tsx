@@ -82,23 +82,31 @@ const Index = () => {
 
         {/* Products */}
         <div className="px-4 mb-6">
-          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Trending Now</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">
+            {search ? `Results for "${search}"` : "Trending Now"}
+          </h2>
+          {filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No products found. Try a different search.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {(search ? filtered : filtered.slice(0, 4)).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Recommended */}
-        <div className="px-4 mb-6">
-          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Recommended for You</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {products.slice(2).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {!search && (
+          <div className="px-4 mb-6">
+            <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Recommended for You</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {products.slice(2).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <BottomNav />
     </div>
