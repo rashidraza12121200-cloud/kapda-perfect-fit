@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import heroBanner from "@/assets/hero-banner.jpg";
@@ -7,6 +8,13 @@ import BottomNav from "@/components/BottomNav";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+
+  const filtered = products.filter((p) =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.category.toLowerCase().includes(search.toLowerCase()) ||
+    p.description.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -29,6 +37,8 @@ const Index = () => {
             <input
               type="text"
               placeholder="Search salwar suits, kurtis, fabrics..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-full"
             />
           </div>
@@ -72,23 +82,31 @@ const Index = () => {
 
         {/* Products */}
         <div className="px-4 mb-6">
-          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Trending Now</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {products.slice(0, 4).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">
+            {search ? `Results for "${search}"` : "Trending Now"}
+          </h2>
+          {filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-8">No products found. Try a different search.</p>
+          ) : (
+            <div className="grid grid-cols-2 gap-3">
+              {(search ? filtered : filtered.slice(0, 4)).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Recommended */}
-        <div className="px-4 mb-6">
-          <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Recommended for You</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {products.slice(2).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+        {!search && (
+          <div className="px-4 mb-6">
+            <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Recommended for You</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {products.slice(2).map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
       <BottomNav />
     </div>
