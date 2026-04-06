@@ -37,6 +37,8 @@ const Index = () => {
             <input
               type="text"
               placeholder="Search salwar suits, kurtis, fabrics..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none w-full"
             />
           </div>
