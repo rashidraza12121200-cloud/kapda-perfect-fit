@@ -1,11 +1,12 @@
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items, updateQty, removeItem } = useCart();
+  const { items, updateQty, removeItem, clearCart } = useCart();
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.qty, 0);
   const stitching = items.some((i) => i.option === "Custom Stitch") ? 500 : 0;
@@ -89,7 +90,13 @@ const Cart = () => {
               </div>
             </div>
 
-            <button className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg">
+            <button
+              onClick={() => {
+                clearCart();
+                toast.success("Order placed successfully! 🎉", { description: "You'll receive a confirmation shortly." });
+              }}
+              className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg"
+            >
               Place Order — ₹{total.toLocaleString()}
             </button>
           </>
