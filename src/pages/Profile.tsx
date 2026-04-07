@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
-  { icon: Package, label: "My Orders", desc: "Track & manage orders" },
-  { icon: Heart, label: "Wishlist", desc: "Your saved items" },
-  { icon: MapPin, label: "Addresses", desc: "Manage delivery addresses" },
-  { icon: CreditCard, label: "Payments", desc: "Saved payment methods" },
-  { icon: Bell, label: "Notifications", desc: "Alerts & updates" },
-  { icon: HelpCircle, label: "Help & Support", desc: "FAQs & contact us" },
+  { icon: Package, label: "My Orders", desc: "Track & manage orders", path: "/orders" },
+  { icon: Heart, label: "Wishlist", desc: "Your saved items", path: "/wishlist" },
+  { icon: MapPin, label: "Addresses", desc: "Manage delivery addresses", path: "/addresses" },
+  { icon: CreditCard, label: "Payments", desc: "Saved payment methods", path: "/payments" },
+  { icon: Bell, label: "Notifications", desc: "Alerts & updates", path: "/notifications" },
+  { icon: HelpCircle, label: "Help & Support", desc: "FAQs & contact us", path: "/help" },
 ];
 
 const Profile = () => {
@@ -41,6 +41,7 @@ const Profile = () => {
           {menuItems.map((item, idx) => (
             <button
               key={item.label}
+              onClick={() => navigate(item.path)}
               className={`w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-secondary/50 transition-colors ${
                 idx < menuItems.length - 1 ? "border-b border-border" : ""
               }`}

@@ -1,35 +1,14 @@
-import { useState } from "react";
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { products } from "@/data/products";
+import { useCart } from "@/context/CartContext";
 import BottomNav from "@/components/BottomNav";
-
-interface CartItem {
-  product: typeof products[0];
-  option: string;
-  detail: string;
-  qty: number;
-}
-
-const initialCart: CartItem[] = [
-  { product: products[0], option: "Readymade", detail: "Size: M", qty: 1 },
-  { product: products[5], option: "Fabric", detail: "2.5m", qty: 1 },
-];
 
 const Cart = () => {
   const navigate = useNavigate();
-  const [items, setItems] = useState(initialCart);
-
-  const updateQty = (idx: number, delta: number) => {
-    setItems((prev) =>
-      prev.map((item, i) => i === idx ? { ...item, qty: Math.max(1, item.qty + delta) } : item)
-    );
-  };
-
-  const removeItem = (idx: number) => setItems((prev) => prev.filter((_, i) => i !== idx));
+  const { items, updateQty, removeItem } = useCart();
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.qty, 0);
-  const stitching = 500;
+  const stitching = items.some((i) => i.option === "Custom Stitch") ? 500 : 0;
   const total = subtotal + stitching;
 
   return (
@@ -98,10 +77,12 @@ const Cart = () => {
                 <span className="text-muted-foreground">Subtotal</span>
                 <span className="text-foreground font-medium">₹{subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Stitching Charges</span>
-                <span className="text-foreground font-medium">₹{stitching}</span>
-              </div>
+              {stitching > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Stitching Charges</span>
+                  <span className="text-foreground font-medium">₹{stitching}</span>
+                </div>
+              )}
               <div className="border-t border-border pt-2 flex justify-between">
                 <span className="font-semibold text-foreground">Total</span>
                 <span className="font-bold text-lg text-foreground">₹{total.toLocaleString()}</span>

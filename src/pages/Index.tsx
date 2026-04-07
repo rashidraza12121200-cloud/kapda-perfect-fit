@@ -9,12 +9,18 @@ import BottomNav from "@/components/BottomNav";
 const Index = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const filtered = products.filter((p) =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.category.toLowerCase().includes(search.toLowerCase()) ||
-    p.description.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = products.filter((p) => {
+    const matchesSearch =
+      p.name.toLowerCase().includes(search.toLowerCase()) ||
+      p.category.toLowerCase().includes(search.toLowerCase()) ||
+      p.description.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = activeCategory ? p.category === activeCategory : true;
+    return matchesSearch && matchesCategory;
+  });
+
+  const isFiltering = search || activeCategory;
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -71,7 +77,12 @@ const Index = () => {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                className="flex-1 bg-card border border-border rounded-2xl py-4 flex flex-col items-center gap-1.5 hover:border-primary/40 transition-colors"
+                onClick={() => setActiveCategory(activeCategory === cat.id ? null : cat.id)}
+                className={`flex-1 bg-card border rounded-2xl py-4 flex flex-col items-center gap-1.5 transition-colors ${
+                  activeCategory === cat.id
+                    ? "border-primary bg-primary/10"
+                    : "border-border hover:border-primary/40"
+                }`}
               >
                 <span className="text-2xl">{cat.emoji}</span>
                 <span className="text-xs font-medium text-foreground">{cat.name}</span>
@@ -83,13 +94,15 @@ const Index = () => {
         {/* Products */}
         <div className="px-4 mb-6">
           <h2 className="font-serif text-lg font-semibold text-foreground mb-3">
-            {search ? `Results for "${search}"` : "Trending Now"}
+            {isFiltering
+              ? `Results${search ? ` for "${search}"` : ""}${activeCategory ? ` in ${activeCategory.replace("-", " ")}` : ""}`
+              : "Trending Now"}
           </h2>
           {filtered.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">No products found. Try a different search.</p>
           ) : (
             <div className="grid grid-cols-2 gap-3">
-              {(search ? filtered : filtered.slice(0, 4)).map((product) => (
+              {(isFiltering ? filtered : filtered.slice(0, 4)).map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
@@ -97,7 +110,7 @@ const Index = () => {
         </div>
 
         {/* Recommended */}
-        {!search && (
+        {!isFiltering && (
           <div className="px-4 mb-6">
             <h2 className="font-serif text-lg font-semibold text-foreground mb-3">Recommended for You</h2>
             <div className="grid grid-cols-2 gap-3">
