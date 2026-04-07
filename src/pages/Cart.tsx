@@ -6,7 +6,7 @@ import BottomNav from "@/components/BottomNav";
 
 const Cart = () => {
   const navigate = useNavigate();
-  const { items, updateQty, removeItem } = useCart();
+  const { items, updateQty, removeItem, clearCart } = useCart();
 
   const subtotal = items.reduce((acc, item) => acc + item.product.price * item.qty, 0);
   const stitching = items.some((i) => i.option === "Custom Stitch") ? 500 : 0;
