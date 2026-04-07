@@ -1,6 +1,7 @@
 import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 const Cart = () => {
@@ -89,7 +90,13 @@ const Cart = () => {
               </div>
             </div>
 
-            <button className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg">
+            <button
+              onClick={() => {
+                clearCart();
+                toast.success("Order placed successfully! 🎉", { description: "You'll receive a confirmation shortly." });
+              }}
+              className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg"
+            >
               Place Order — ₹{total.toLocaleString()}
             </button>
           </>
