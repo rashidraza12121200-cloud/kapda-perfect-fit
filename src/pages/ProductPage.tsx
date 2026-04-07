@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Heart, ShoppingCart, Scissors } from "lucide-react";
 import { products } from "@/data/products";
+import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 type BuyOption = "readymade" | "fabric" | "custom";
@@ -9,6 +11,7 @@ type BuyOption = "readymade" | "fabric" | "custom";
 const ProductPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addItem } = useCart();
   const product = products.find((p) => p.id === id);
   const [option, setOption] = useState<BuyOption>("readymade");
   const [selectedSize, setSelectedSize] = useState("M");
@@ -24,6 +27,23 @@ const ProductPage = () => {
     { key: "fabric", label: "Fabric", icon: <span className="text-sm">🧵</span> },
     { key: "custom", label: "Custom Stitch", icon: <Scissors className="w-3.5 h-3.5" /> },
   ];
+
+  const handleAddToCart = () => {
+    let detail = "";
+    let optionLabel = "";
+    if (option === "readymade") {
+      optionLabel = "Readymade";
+      detail = `Size: ${selectedSize}`;
+    } else if (option === "fabric") {
+      optionLabel = "Fabric";
+      detail = `${fabricLength}m`;
+    } else {
+      optionLabel = "Custom Stitch";
+      detail = `H: ${height || "—"}cm, C: ${chest || "—"}in`;
+    }
+    addItem({ product, option: optionLabel, detail });
+    toast.success("Added to cart!", { description: `${product.name} — ${optionLabel}` });
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -153,7 +173,10 @@ const ProductPage = () => {
           )}
 
           {/* Add to Cart */}
-          <button className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-6 shadow-lg">
+          <button
+            onClick={handleAddToCart}
+            className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-6 shadow-lg"
+          >
             Add to Cart — ₹{option === "fabric" ? (product.price * fabricLength).toLocaleString() : product.price.toLocaleString()}
           </button>
         </div>
