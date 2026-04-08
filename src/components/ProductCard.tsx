@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Star } from "lucide-react";
 import type { Product } from "@/data/products";
 
 const ProductCard = ({ product }: { product: Product }) => {
@@ -10,7 +11,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   return (
     <button
       onClick={() => navigate(`/product/${product.id}`)}
-      className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-all duration-300 text-left w-full"
+      className="group bg-card rounded-2xl overflow-hidden border border-border hover:shadow-lg transition-all duration-300 text-left w-full animate-fade-in"
     >
       <div className="aspect-[3/4] overflow-hidden relative">
         <img
@@ -28,6 +29,11 @@ const ProductCard = ({ product }: { product: Product }) => {
       <div className="p-3">
         <p className="text-xs text-muted-foreground capitalize">{product.category.replace("-", " ")}</p>
         <h3 className="font-medium text-sm text-foreground mt-0.5 line-clamp-1">{product.name}</h3>
+        <div className="flex items-center gap-1 mt-1">
+          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+          <span className="text-xs font-medium text-foreground">{product.rating}</span>
+          <span className="text-xs text-muted-foreground">({product.reviews})</span>
+        </div>
         <div className="flex items-center gap-2 mt-1.5">
           <span className="font-semibold text-foreground">₹{product.price.toLocaleString()}</span>
           {product.originalPrice && (
