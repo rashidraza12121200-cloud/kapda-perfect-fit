@@ -1,10 +1,10 @@
-import { Home, Search, Sparkles, ShoppingCart, User } from "lucide-react";
+import { Home, Sparkles, Scissors, ShoppingCart, User } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const navItems = [
   { path: "/", icon: Home, label: "Home" },
   { path: "/ai-recommend", icon: Sparkles, label: "AI Fit" },
-  { path: "/tailors", icon: Search, label: "Tailors" },
+  { path: "/tailors", icon: Scissors, label: "Tailors" },
   { path: "/cart", icon: ShoppingCart, label: "Cart" },
   { path: "/profile", icon: User, label: "Profile" },
 ];
@@ -15,7 +15,7 @@ const BottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border">
-      <div className="max-w-md mx-auto flex justify-around items-center py-2">
+      <div className="max-w-5xl mx-auto flex justify-around items-center py-2">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (

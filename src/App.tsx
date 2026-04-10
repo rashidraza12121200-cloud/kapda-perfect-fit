@@ -7,6 +7,7 @@ import { CartProvider } from "@/context/CartContext";
 import { OrderProvider } from "@/context/OrderContext";
 import { WishlistProvider } from "@/context/WishlistContext";
 import { UserProvider } from "@/context/UserContext";
+import { ReviewProvider } from "@/context/ReviewContext";
 import Index from "./pages/Index";
 import ProductPage from "./pages/ProductPage";
 import AIRecommend from "./pages/AIRecommend";
@@ -30,6 +31,7 @@ const App = () => (
       <CartProvider>
       <WishlistProvider>
       <OrderProvider>
+      <ReviewProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -49,6 +51,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
+      </ReviewProvider>
       </OrderProvider>
       </WishlistProvider>
       </CartProvider>
