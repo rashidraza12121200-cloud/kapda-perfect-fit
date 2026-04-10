@@ -15,26 +15,39 @@ const TailorFinder = () => {
   const navigate = useNavigate();
   const [locating, setLocating] = useState(false);
   const [located, setLocated] = useState(false);
+  const [locationName, setLocationName] = useState("");
 
   const handleLocate = () => {
     setLocating(true);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        () => {
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+            const data = await res.json();
+            const area = data.address?.suburb || data.address?.city || data.address?.town || data.address?.village || "Your Area";
+            const city = data.address?.city || data.address?.state || "";
+            setLocationName(`${area}, ${city}`);
+          } catch {
+            setLocationName(`Lat: ${latitude.toFixed(4)}, Lng: ${longitude.toFixed(4)}`);
+          }
           setLocating(false);
           setLocated(true);
-          toast.success("Location found!", { description: "Showing tailors near you" });
+          toast.success("Location found!");
         },
         () => {
           setLocating(false);
           setLocated(true);
+          setLocationName("Delhi, India (default)");
           toast.info("Using default location", { description: "Allow location for better results" });
         },
-        { timeout: 5000 }
+        { timeout: 8000 }
       );
     } else {
       setLocating(false);
       setLocated(true);
+      setLocationName("Delhi, India");
       toast.info("Using default location");
     }
   };
@@ -45,7 +58,7 @@ const TailorFinder = () => {
 
   return (
     <div className="min-h-screen bg-background pb-20">
-      <div className="max-w-md mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         <header className="flex items-center gap-3 pt-6 pb-4">
           <button onClick={() => navigate(-1)} className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center">
             <ArrowLeft className="w-5 h-5 text-foreground" />
@@ -59,9 +72,11 @@ const TailorFinder = () => {
         {/* Map / Location */}
         <div className="rounded-2xl overflow-hidden bg-secondary h-40 flex items-center justify-center mb-4 border border-border">
           {located ? (
-            <div className="text-center">
+            <div className="text-center px-4">
               <MapPin className="w-8 h-8 text-primary mx-auto mb-1" />
-              <p className="text-xs text-muted-foreground">Showing tailors near your location</p>
+              <p className="text-sm font-semibold text-foreground">{locationName}</p>
+              <p className="text-xs text-muted-foreground mt-1">Showing tailors near your location</p>
+              <button onClick={() => { setLocated(false); setLocationName(""); }} className="text-xs text-primary font-semibold mt-2">Change Location</button>
             </div>
           ) : (
             <button onClick={handleLocate} disabled={locating} className="flex flex-col items-center gap-2">
@@ -73,7 +88,7 @@ const TailorFinder = () => {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {tailors.map((t) => (
             <div key={t.id} className="bg-card border border-border rounded-2xl p-4 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl gradient-accent flex items-center justify-center text-accent-foreground font-bold text-lg shrink-0">

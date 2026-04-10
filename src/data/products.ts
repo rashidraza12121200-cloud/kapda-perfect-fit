@@ -5,7 +5,8 @@ import product4 from "@/assets/product-4.jpg";
 import product5 from "@/assets/product-5.jpg";
 import product6 from "@/assets/product-6.jpg";
 import product7 from "@/assets/product-7.jpg";
-import product8 from "@/assets/product-8.jpg";
+import product9 from "@/assets/product-9.jpg";
+import product10 from "@/assets/product-10.jpg";
 
 export interface Product {
   id: string;
@@ -14,12 +15,22 @@ export interface Product {
   fabricPrice: number;
   originalPrice?: number;
   image: string;
-  category: "salwar-suit" | "kurti" | "saree" | "fabric";
+  category: "salwar-suit" | "kurti" | "saree" | "fabric" | "men";
   description: string;
   fabricLength?: string;
   sizes?: string[];
   rating: number;
   reviews: number;
+  isCustomUpload?: boolean;
+}
+
+export interface Review {
+  id: string;
+  productId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  date: Date;
 }
 
 export const products: Product[] = [
@@ -27,7 +38,7 @@ export const products: Product[] = [
     id: "1",
     name: "Pink Embroidered Anarkali Suit",
     price: 2499,
-    fabricPrice: 2099,
+    fabricPrice: 1249,
     originalPrice: 3999,
     image: product1,
     category: "salwar-suit",
@@ -40,7 +51,7 @@ export const products: Product[] = [
     id: "2",
     name: "Teal Chikankari Kurti",
     price: 1299,
-    fabricPrice: 899,
+    fabricPrice: 649,
     originalPrice: 1899,
     image: product2,
     category: "kurti",
@@ -53,7 +64,7 @@ export const products: Product[] = [
     id: "3",
     name: "Red Banarasi Silk Saree",
     price: 4999,
-    fabricPrice: 4599,
+    fabricPrice: 2499,
     originalPrice: 7499,
     image: product3,
     category: "saree",
@@ -66,7 +77,7 @@ export const products: Product[] = [
     id: "4",
     name: "Lavender Anarkali Suit",
     price: 2199,
-    fabricPrice: 1799,
+    fabricPrice: 1099,
     originalPrice: 3499,
     image: product4,
     category: "salwar-suit",
@@ -79,7 +90,7 @@ export const products: Product[] = [
     id: "5",
     name: "Mint Green Cotton Kurti",
     price: 899,
-    fabricPrice: 499,
+    fabricPrice: 449,
     originalPrice: 1299,
     image: product5,
     category: "kurti",
@@ -92,7 +103,7 @@ export const products: Product[] = [
     id: "6",
     name: "Navy Blue Silk Fabric",
     price: 799,
-    fabricPrice: 799,
+    fabricPrice: 399,
     image: product6,
     category: "fabric",
     description: "Premium navy blue silk fabric with golden motifs. Price per meter.",
@@ -104,7 +115,7 @@ export const products: Product[] = [
     id: "7",
     name: "Maroon Embroidered Palazzo Set",
     price: 2899,
-    fabricPrice: 2499,
+    fabricPrice: 1449,
     originalPrice: 4299,
     image: product7,
     category: "salwar-suit",
@@ -114,16 +125,31 @@ export const products: Product[] = [
     reviews: 167,
   },
   {
-    id: "8",
-    name: "Yellow Floral Printed Dupatta",
-    price: 699,
-    fabricPrice: 699,
-    image: product8,
-    category: "fabric",
-    description: "Vibrant yellow cotton dupatta with beautiful floral print. Perfect accessory for any outfit.",
-    fabricLength: "2.5m",
+    id: "9",
+    name: "Navy Blue Printed Kurta (Men)",
+    price: 1899,
+    fabricPrice: 949,
+    originalPrice: 2499,
+    image: product9,
+    category: "men",
+    description: "Elegant navy blue block-print kurta for men. Perfect for festive and casual occasions.",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    rating: 4.6,
+    reviews: 88,
+  },
+  {
+    id: "10",
+    name: "Abstract Print T-Shirt (Men)",
+    price: 799,
+    fabricPrice: 399,
+    originalPrice: 1199,
+    image: product10,
+    category: "men",
+    description: "Vibrant abstract geometric printed t-shirt. Upload your own design for custom prints!",
+    sizes: ["S", "M", "L", "XL", "XXL"],
     rating: 4.4,
-    reviews: 89,
+    reviews: 142,
+    isCustomUpload: true,
   },
 ];
 
@@ -132,4 +158,5 @@ export const categories = [
   { id: "kurti", name: "Kurti", emoji: "👚" },
   { id: "saree", name: "Saree", emoji: "🥻" },
   { id: "fabric", name: "Fabric", emoji: "🧵" },
+  { id: "men", name: "Men", emoji: "👔" },
 ];
