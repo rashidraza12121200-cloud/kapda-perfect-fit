@@ -26,7 +26,7 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [name, setNameState] = useState(() => localStorage.getItem("kapda_name") || "Kapda+ User");
   const [email] = useState("kapda.user@example.com");
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("kapda_loggedin") === "1");
   const [addresses, setAddresses] = useState<Address[]>(() => {
     const saved = localStorage.getItem("kapda_addresses");
     return saved ? JSON.parse(saved) : [];
@@ -42,8 +42,8 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     if (!selectedAddressId) setSelectedAddressId(newAddr.id);
   };
   const removeAddress = (id: string) => setAddresses((prev) => prev.filter((a) => a.id !== id));
-  const logout = () => setIsLoggedIn(false);
-  const login = () => setIsLoggedIn(true);
+  const logout = () => { setIsLoggedIn(false); localStorage.removeItem("kapda_loggedin"); };
+  const login = () => { setIsLoggedIn(true); localStorage.setItem("kapda_loggedin", "1"); };
 
   return (
     <UserContext.Provider value={{ name, email, setName, addresses, addAddress, removeAddress, selectedAddressId, setSelectedAddressId, isLoggedIn, logout, login }}>
