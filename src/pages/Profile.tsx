@@ -60,7 +60,7 @@ const Profile = () => {
             ) : (
               <h2 className="font-semibold text-foreground">{name}</h2>
             )}
-            <p className="text-xs text-muted-foreground">{email}</p>
+            <p className="text-xs text-muted-foreground">{email || "Not signed in"}</p>
           </div>
           {!editing && <button onClick={() => { setEditName(name); setEditing(true); }} className="text-xs font-semibold text-primary">Edit</button>}
         </div>
