@@ -61,9 +61,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const removeAddress = (id: string) => setAddresses((prev) => prev.filter((a) => a.id !== id));
 
   const login = (info?: { name?: string; email?: string; phone?: string }) => {
-    if (info?.name) { setNameState(info.name); localStorage.setItem("kapda_name", info.name); }
-    if (info?.email) { setEmailState(info.email); localStorage.setItem("kapda_email", info.email); }
-    if (info?.phone) { setPhoneState(info.phone); localStorage.setItem("kapda_phone", info.phone); }
+    const nextName = info?.name ?? GUEST_NAME;
+    const nextEmail = info?.email ?? "";
+    const nextPhone = info?.phone ?? "";
+    setNameState(nextName); localStorage.setItem("kapda_name", nextName);
+    setEmailState(nextEmail); localStorage.setItem("kapda_email", nextEmail);
+    setPhoneState(nextPhone); localStorage.setItem("kapda_phone", nextPhone);
     setIsLoggedIn(true);
     localStorage.setItem("kapda_loggedin", "1");
   };
