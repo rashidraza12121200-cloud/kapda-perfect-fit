@@ -30,10 +30,17 @@ const GUEST_NAME = "Guest";
 const GUEST_EMAIL = "";
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [name, setNameState] = useState(() => localStorage.getItem("kapda_name") || GUEST_NAME);
-  const [email, setEmailState] = useState(() => localStorage.getItem("kapda_email") || GUEST_EMAIL);
-  const [phone, setPhoneState] = useState(() => localStorage.getItem("kapda_phone") || "");
-  const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("kapda_loggedin") === "1");
+  const loggedInInit = localStorage.getItem("kapda_loggedin") === "1";
+  // If not logged in, don't surface any leftover stored identity (avoids stale dummy values)
+  if (!loggedInInit) {
+    localStorage.removeItem("kapda_name");
+    localStorage.removeItem("kapda_email");
+    localStorage.removeItem("kapda_phone");
+  }
+  const [name, setNameState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_name") || GUEST_NAME : GUEST_NAME));
+  const [email, setEmailState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_email") || GUEST_EMAIL : GUEST_EMAIL));
+  const [phone, setPhoneState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_phone") || "" : ""));
+  const [isLoggedIn, setIsLoggedIn] = useState(loggedInInit);
   const [addresses, setAddresses] = useState<Address[]>(() => {
     const saved = localStorage.getItem("kapda_addresses");
     return saved ? JSON.parse(saved) : [];
