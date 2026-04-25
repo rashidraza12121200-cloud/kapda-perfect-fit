@@ -10,7 +10,10 @@ interface Address {
 interface UserContextType {
   name: string;
   email: string;
+  phone: string;
   setName: (name: string) => void;
+  setEmail: (email: string) => void;
+  setPhone: (phone: string) => void;
   addresses: Address[];
   addAddress: (addr: Omit<Address, "id">) => void;
   removeAddress: (id: string) => void;
@@ -18,14 +21,18 @@ interface UserContextType {
   setSelectedAddressId: (id: string | null) => void;
   isLoggedIn: boolean;
   logout: () => void;
-  login: () => void;
+  login: (info?: { name?: string; email?: string; phone?: string }) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
+const GUEST_NAME = "Guest";
+const GUEST_EMAIL = "";
+
 export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const [name, setNameState] = useState(() => localStorage.getItem("kapda_name") || "Kapda+ User");
-  const [email] = useState("kapda.user@example.com");
+  const [name, setNameState] = useState(() => localStorage.getItem("kapda_name") || GUEST_NAME);
+  const [email, setEmailState] = useState(() => localStorage.getItem("kapda_email") || GUEST_EMAIL);
+  const [phone, setPhoneState] = useState(() => localStorage.getItem("kapda_phone") || "");
   const [isLoggedIn, setIsLoggedIn] = useState(() => localStorage.getItem("kapda_loggedin") === "1");
   const [addresses, setAddresses] = useState<Address[]>(() => {
     const saved = localStorage.getItem("kapda_addresses");
@@ -36,17 +43,37 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => { localStorage.setItem("kapda_addresses", JSON.stringify(addresses)); }, [addresses]);
 
   const setName = (n: string) => { setNameState(n); localStorage.setItem("kapda_name", n); };
+  const setEmail = (e: string) => { setEmailState(e); localStorage.setItem("kapda_email", e); };
+  const setPhone = (p: string) => { setPhoneState(p); localStorage.setItem("kapda_phone", p); };
+
   const addAddress = (addr: Omit<Address, "id">) => {
     const newAddr = { ...addr, id: `addr-${Date.now()}` };
     setAddresses((prev) => [...prev, newAddr]);
     if (!selectedAddressId) setSelectedAddressId(newAddr.id);
   };
   const removeAddress = (id: string) => setAddresses((prev) => prev.filter((a) => a.id !== id));
-  const logout = () => { setIsLoggedIn(false); localStorage.removeItem("kapda_loggedin"); };
-  const login = () => { setIsLoggedIn(true); localStorage.setItem("kapda_loggedin", "1"); };
+
+  const login = (info?: { name?: string; email?: string; phone?: string }) => {
+    if (info?.name) { setNameState(info.name); localStorage.setItem("kapda_name", info.name); }
+    if (info?.email) { setEmailState(info.email); localStorage.setItem("kapda_email", info.email); }
+    if (info?.phone) { setPhoneState(info.phone); localStorage.setItem("kapda_phone", info.phone); }
+    setIsLoggedIn(true);
+    localStorage.setItem("kapda_loggedin", "1");
+  };
+
+  const logout = () => {
+    setIsLoggedIn(false);
+    setNameState(GUEST_NAME);
+    setEmailState(GUEST_EMAIL);
+    setPhoneState("");
+    localStorage.removeItem("kapda_loggedin");
+    localStorage.removeItem("kapda_name");
+    localStorage.removeItem("kapda_email");
+    localStorage.removeItem("kapda_phone");
+  };
 
   return (
-    <UserContext.Provider value={{ name, email, setName, addresses, addAddress, removeAddress, selectedAddressId, setSelectedAddressId, isLoggedIn, logout, login }}>
+    <UserContext.Provider value={{ name, email, phone, setName, setEmail, setPhone, addresses, addAddress, removeAddress, selectedAddressId, setSelectedAddressId, isLoggedIn, logout, login }}>
       {children}
     </UserContext.Provider>
   );

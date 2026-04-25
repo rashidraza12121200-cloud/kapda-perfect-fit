@@ -25,6 +25,7 @@ import Addresses from "./pages/Addresses";
 import Payments from "./pages/Payments";
 import Notifications from "./pages/Notifications";
 import HelpSupport from "./pages/HelpSupport";
+import Account from "./pages/Account";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -57,6 +58,7 @@ const App = () => {
                       <Route path="/payments" element={<Payments />} />
                       <Route path="/notifications" element={<Notifications />} />
                       <Route path="/help" element={<HelpSupport />} />
+                      <Route path="/account" element={<Account />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </BrowserRouter>

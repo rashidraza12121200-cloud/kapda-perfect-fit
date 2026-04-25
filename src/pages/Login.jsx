@@ -18,7 +18,7 @@ import { useUser } from "@/context/UserContext";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login, setName } = useUser();
+  const { login } = useUser();
   const [mode, setMode] = useState("signin"); // signin | signup
   const [method, setMethod] = useState("email"); // email | phone
 
@@ -51,16 +51,17 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
+      let displayName = fullName;
       if (mode === "signup") {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         if (fullName) await updateProfile(cred.user, { displayName: fullName });
-        if (fullName) setName(fullName);
         toast.success("Account created 🚀");
       } else {
-        await signInWithEmailAndPassword(auth, email, password);
+        const cred = await signInWithEmailAndPassword(auth, email, password);
+        displayName = cred.user.displayName || email.split("@")[0];
         toast.success("Welcome back 👋");
       }
-      login();
+      login({ name: displayName || email.split("@")[0], email });
       navigate("/");
     } catch (err) {
       toast.error(err.message);
@@ -90,10 +91,10 @@ export default function Login() {
     if (!confirmation) return;
     setLoading(true);
     try {
-      await confirmation.confirm(otp);
-      if (fullName) setName(fullName);
+      const cred = await confirmation.confirm(otp);
+      const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
       toast.success("Phone verified ✅");
-      login();
+      login({ name: fullName || cred.user.displayName || formatted, phone: formatted });
       navigate("/");
     } catch (err) {
       toast.error(err.message);
