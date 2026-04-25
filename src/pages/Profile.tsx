@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { ArrowLeft, ChevronRight, Heart, Package, MapPin, CreditCard, Bell, HelpCircle, LogOut, Check, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, Heart, Package, MapPin, CreditCard, Bell, HelpCircle, LogOut, Check, X, UserCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 import BottomNav from "@/components/BottomNav";
 
 const menuItems = [
+  { icon: UserCircle, label: "Account Details", desc: "Name, email & phone", path: "/account" },
   { icon: Package, label: "My Orders", desc: "Track & manage orders", path: "/orders" },
   { icon: Heart, label: "Wishlist", desc: "Your saved items", path: "/wishlist" },
   { icon: MapPin, label: "Addresses", desc: "Manage delivery addresses", path: "/addresses" },
