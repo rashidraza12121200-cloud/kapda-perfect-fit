@@ -36,7 +36,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Index />} />
             <Route path="/product/:id" element={<ProductPage />} />
             <Route path="/ai-recommend" element={<AIRecommend />} />
             <Route path="/tailors" element={<TailorFinder />} />
