@@ -1,4 +1,6 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { auth } from "../firebase";
 
 interface Address {
   id: string;
@@ -29,18 +31,30 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 const GUEST_NAME = "Guest";
 const GUEST_EMAIL = "";
 
-export const UserProvider = ({ children }: { children: ReactNode }) => {
-  const loggedInInit = localStorage.getItem("kapda_loggedin") === "1";
-  // If not logged in, don't surface any leftover stored identity (avoids stale dummy values)
-  if (!loggedInInit) {
-    localStorage.removeItem("kapda_name");
-    localStorage.removeItem("kapda_email");
-    localStorage.removeItem("kapda_phone");
+const getIdentityFromUser = (user: User | null) => {
+  if (!user) {
+    return { name: GUEST_NAME, email: GUEST_EMAIL, phone: "", isLoggedIn: false };
   }
-  const [name, setNameState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_name") || GUEST_NAME : GUEST_NAME));
-  const [email, setEmailState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_email") || GUEST_EMAIL : GUEST_EMAIL));
-  const [phone, setPhoneState] = useState(() => (loggedInInit ? localStorage.getItem("kapda_phone") || "" : ""));
-  const [isLoggedIn, setIsLoggedIn] = useState(loggedInInit);
+
+  return {
+    name:
+      localStorage.getItem("kapda_name") ||
+      user.displayName ||
+      user.email?.split("@")[0] ||
+      user.phoneNumber ||
+      GUEST_NAME,
+    email: user.email || localStorage.getItem("kapda_email") || GUEST_EMAIL,
+    phone: user.phoneNumber || localStorage.getItem("kapda_phone") || "",
+    isLoggedIn: true,
+  };
+};
+
+export const UserProvider = ({ children }: { children: ReactNode }) => {
+  const initialIdentity = getIdentityFromUser(auth.currentUser);
+  const [name, setNameState] = useState(initialIdentity.name);
+  const [email, setEmailState] = useState(initialIdentity.email);
+  const [phone, setPhoneState] = useState(initialIdentity.phone);
+  const [isLoggedIn, setIsLoggedIn] = useState(initialIdentity.isLoggedIn);
   const [addresses, setAddresses] = useState<Address[]>(() => {
     const saved = localStorage.getItem("kapda_addresses");
     return saved ? JSON.parse(saved) : [];
@@ -48,6 +62,31 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
 
   useEffect(() => { localStorage.setItem("kapda_addresses", JSON.stringify(addresses)); }, [addresses]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      const identity = getIdentityFromUser(user);
+
+      setNameState(identity.name);
+      setEmailState(identity.email);
+      setPhoneState(identity.phone);
+      setIsLoggedIn(identity.isLoggedIn);
+
+      if (identity.isLoggedIn) {
+        localStorage.setItem("kapda_loggedin", "1");
+        localStorage.setItem("kapda_name", identity.name);
+        localStorage.setItem("kapda_email", identity.email);
+        localStorage.setItem("kapda_phone", identity.phone);
+      } else {
+        localStorage.removeItem("kapda_loggedin");
+        localStorage.removeItem("kapda_name");
+        localStorage.removeItem("kapda_email");
+        localStorage.removeItem("kapda_phone");
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   const setName = (n: string) => { setNameState(n); localStorage.setItem("kapda_name", n); };
   const setEmail = (e: string) => { setEmailState(e); localStorage.setItem("kapda_email", e); };
@@ -80,6 +119,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     localStorage.removeItem("kapda_name");
     localStorage.removeItem("kapda_email");
     localStorage.removeItem("kapda_phone");
+    signOut(auth).catch(() => undefined);
   };
 
   return (
