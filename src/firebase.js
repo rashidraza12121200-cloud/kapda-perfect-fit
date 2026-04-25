@@ -8,9 +8,10 @@ const firebaseConfig = {
   storageBucket: "kapdaplus.firebasestorage.app",
   messagingSenderId: "532093065246",
   appId: "1:532093065246:web:ffdcd6105c85f6dc4ab60f",
-  measurementId: "G-R1FFWJR10B",
+  measurementId: "G-R1FFWJR10B"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export default app;
