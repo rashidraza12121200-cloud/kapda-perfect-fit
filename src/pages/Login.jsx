@@ -187,12 +187,11 @@ export default function Login() {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Continue"}
                   </Button>
-                  <button type="button" onClick={() => setConfirmation(null)} className="w-full text-xs text-muted-foreground hover:text-foreground">
+                  <button type="button" onClick={() => { setGeneratedOtp(null); setOtp(""); }} className="w-full text-xs text-muted-foreground hover:text-foreground">
                     Change number
                   </button>
                 </form>
               )}
-              <div ref={recaptchaRef} />
             </TabsContent>
           </Tabs>
 
