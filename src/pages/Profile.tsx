@@ -17,7 +17,7 @@ const menuItems = [
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { name, email, setName, logout } = useUser();
+  const { name, email, phone, setName, logout } = useUser();
   const [editing, setEditing] = useState(false);
   const [editName, setEditName] = useState(name);
 
