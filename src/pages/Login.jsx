@@ -132,7 +132,7 @@ export default function Login() {
           </div>
 
           {/* Method tabs */}
-          <Tabs value={method} onValueChange={(v) => { setMethod(v); setConfirmation(null); }} className="w-full">
+          <Tabs value={method} onValueChange={(v) => { setMethod(v); setGeneratedOtp(null); setOtp(""); }} className="w-full">
             <TabsList className="grid grid-cols-2 w-full mb-4">
               <TabsTrigger value="email"><Mail className="w-4 h-4 mr-2" />Email</TabsTrigger>
               <TabsTrigger value="phone"><Phone className="w-4 h-4 mr-2" />Phone</TabsTrigger>
