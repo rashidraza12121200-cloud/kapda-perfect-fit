@@ -57,13 +57,20 @@ export default function Login() {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
+    if (!/^\+?\d{10,15}$/.test(phone.replace(/\s/g, ""))) {
+      toast.error("Enter a valid phone number");
+      return;
+    }
     setLoading(true);
     try {
-      const verifier = window.recaptchaVerifier;
-      const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
-      const result = await signInWithPhoneNumber(auth, formatted, verifier);
-      setConfirmation(result);
-      toast.success("OTP sent to your phone");
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      setGeneratedOtp(code);
+      setOtp("");
+      // Demo mode: show the OTP on screen instead of sending real SMS
+      toast.success(`Demo OTP: ${code}`, {
+        description: "In production this would be sent via SMS.",
+        duration: 10000,
+      });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -73,13 +80,16 @@ export default function Login() {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!confirmation) return;
+    if (!generatedOtp) return;
     setLoading(true);
     try {
-      const cred = await confirmation.confirm(otp);
+      if (otp.trim() !== generatedOtp) {
+        toast.error("Invalid OTP. Try again.");
+        return;
+      }
       const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
       toast.success("Phone verified ✅");
-      login({ name: fullName || cred.user.displayName || formatted, phone: formatted });
+      login({ name: fullName || formatted, phone: formatted });
       navigate("/");
     } catch (err) {
       toast.error(err.message);
