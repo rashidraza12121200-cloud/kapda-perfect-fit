@@ -161,7 +161,7 @@ export default function Login() {
             </TabsContent>
 
             <TabsContent value="phone">
-              {!confirmation ? (
+              {!generatedOtp ? (
                 <form onSubmit={handleSendOtp} className="space-y-3">
                   {mode === "signup" && (
                     <div>
