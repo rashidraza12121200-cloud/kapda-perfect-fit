@@ -27,12 +27,26 @@ const Cart = () => {
   const total = subtotal + stitching;
 
   const handlePlaceOrder = () => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to place your order");
+      navigate("/login");
+      return;
+    }
     const addr = addresses.find((a) => a.id === selectedAddress);
     const pay = paymentMethods.find((p) => p.id === selectedPayment);
     placeOrder(items, total, addr?.full, pay?.label);
     clearCart();
     toast.success("Order placed successfully! 🎉", { description: "You'll receive a confirmation shortly." });
     navigate("/orders");
+  };
+
+  const handleContinue = (next: "address" | "payment") => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to continue checkout");
+      navigate("/login");
+      return;
+    }
+    setStep(next);
   };
 
   return (
