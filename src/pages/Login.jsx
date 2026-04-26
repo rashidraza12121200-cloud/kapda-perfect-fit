@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
   updateProfile,
 } from "firebase/auth";
 import { Mail, Phone, ArrowLeft, Loader2 } from "lucide-react";
@@ -27,25 +25,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Phone state
+  // Phone state (demo OTP)
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [confirmation, setConfirmation] = useState(null);
+  const [generatedOtp, setGeneratedOtp] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const recaptchaRef = useRef(null);
-
-  useEffect(() => {
-    if (!window.recaptchaVerifier && recaptchaRef.current) {
-      try {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaRef.current, {
-          size: "invisible",
-        });
-      } catch (e) {
-        console.warn("reCAPTCHA init failed", e);
-      }
-    }
-  }, []);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
