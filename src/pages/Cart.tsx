@@ -135,7 +135,7 @@ const Cart = () => {
               </div>
             </div>
 
-            <button onClick={() => setStep("address")}
+            <button onClick={() => handleContinue("address")}
               className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg flex items-center justify-center gap-2">
               Continue <ChevronRight className="w-4 h-4" />
             </button>
