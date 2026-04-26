@@ -168,7 +168,7 @@ const Cart = () => {
                 <button onClick={() => navigate("/addresses")} className="w-full mt-3 py-2.5 rounded-xl text-sm font-semibold border border-border text-foreground">
                   + Add New Address
                 </button>
-                <button onClick={() => { if (!selectedAddress) { toast.error("Select an address"); return; } setStep("payment"); }}
+                <button onClick={() => { if (!selectedAddress) { toast.error("Select an address"); return; } handleContinue("payment"); }}
                   className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg flex items-center justify-center gap-2">
                   Continue to Payment <ChevronRight className="w-4 h-4" />
                 </button>
