@@ -1,11 +1,9 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { auth } from "../firebase";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signInWithPhoneNumber,
-  RecaptchaVerifier,
   updateProfile,
 } from "firebase/auth";
 import { Mail, Phone, ArrowLeft, Loader2 } from "lucide-react";
@@ -27,25 +25,12 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  // Phone state
+  // Phone state (demo OTP)
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
-  const [confirmation, setConfirmation] = useState(null);
+  const [generatedOtp, setGeneratedOtp] = useState(null);
 
   const [loading, setLoading] = useState(false);
-  const recaptchaRef = useRef(null);
-
-  useEffect(() => {
-    if (!window.recaptchaVerifier && recaptchaRef.current) {
-      try {
-        window.recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaRef.current, {
-          size: "invisible",
-        });
-      } catch (e) {
-        console.warn("reCAPTCHA init failed", e);
-      }
-    }
-  }, []);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
@@ -72,13 +57,20 @@ export default function Login() {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
+    if (!/^\+?\d{10,15}$/.test(phone.replace(/\s/g, ""))) {
+      toast.error("Enter a valid phone number");
+      return;
+    }
     setLoading(true);
     try {
-      const verifier = window.recaptchaVerifier;
-      const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
-      const result = await signInWithPhoneNumber(auth, formatted, verifier);
-      setConfirmation(result);
-      toast.success("OTP sent to your phone");
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      setGeneratedOtp(code);
+      setOtp("");
+      // Demo mode: show the OTP on screen instead of sending real SMS
+      toast.success(`Demo OTP: ${code}`, {
+        description: "In production this would be sent via SMS.",
+        duration: 10000,
+      });
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -88,13 +80,16 @@ export default function Login() {
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
-    if (!confirmation) return;
+    if (!generatedOtp) return;
     setLoading(true);
     try {
-      const cred = await confirmation.confirm(otp);
+      if (otp.trim() !== generatedOtp) {
+        toast.error("Invalid OTP. Try again.");
+        return;
+      }
       const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
       toast.success("Phone verified ✅");
-      login({ name: fullName || cred.user.displayName || formatted, phone: formatted });
+      login({ name: fullName || formatted, phone: formatted });
       navigate("/");
     } catch (err) {
       toast.error(err.message);
@@ -137,7 +132,7 @@ export default function Login() {
           </div>
 
           {/* Method tabs */}
-          <Tabs value={method} onValueChange={(v) => { setMethod(v); setConfirmation(null); }} className="w-full">
+          <Tabs value={method} onValueChange={(v) => { setMethod(v); setGeneratedOtp(null); setOtp(""); }} className="w-full">
             <TabsList className="grid grid-cols-2 w-full mb-4">
               <TabsTrigger value="email"><Mail className="w-4 h-4 mr-2" />Email</TabsTrigger>
               <TabsTrigger value="phone"><Phone className="w-4 h-4 mr-2" />Phone</TabsTrigger>
@@ -166,7 +161,7 @@ export default function Login() {
             </TabsContent>
 
             <TabsContent value="phone">
-              {!confirmation ? (
+              {!generatedOtp ? (
                 <form onSubmit={handleSendOtp} className="space-y-3">
                   {mode === "signup" && (
                     <div>
@@ -192,12 +187,11 @@ export default function Login() {
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify & Continue"}
                   </Button>
-                  <button type="button" onClick={() => setConfirmation(null)} className="w-full text-xs text-muted-foreground hover:text-foreground">
+                  <button type="button" onClick={() => { setGeneratedOtp(null); setOtp(""); }} className="w-full text-xs text-muted-foreground hover:text-foreground">
                     Change number
                   </button>
                 </form>
               )}
-              <div ref={recaptchaRef} />
             </TabsContent>
           </Tabs>
 
