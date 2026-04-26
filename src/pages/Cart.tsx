@@ -17,7 +17,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const { items, updateQty, removeItem, clearCart } = useCart();
   const { placeOrder } = useOrders();
-  const { addresses } = useUser();
+  const { addresses, isLoggedIn } = useUser();
   const [step, setStep] = useState<"cart" | "address" | "payment">("cart");
   const [selectedAddress, setSelectedAddress] = useState<string | null>(addresses[0]?.id || null);
   const [selectedPayment, setSelectedPayment] = useState("upi");
@@ -27,12 +27,26 @@ const Cart = () => {
   const total = subtotal + stitching;
 
   const handlePlaceOrder = () => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to place your order");
+      navigate("/login");
+      return;
+    }
     const addr = addresses.find((a) => a.id === selectedAddress);
     const pay = paymentMethods.find((p) => p.id === selectedPayment);
     placeOrder(items, total, addr?.full, pay?.label);
     clearCart();
     toast.success("Order placed successfully! 🎉", { description: "You'll receive a confirmation shortly." });
     navigate("/orders");
+  };
+
+  const handleContinue = (next: "address" | "payment") => {
+    if (!isLoggedIn) {
+      toast.error("Please sign in to continue checkout");
+      navigate("/login");
+      return;
+    }
+    setStep(next);
   };
 
   return (
@@ -121,7 +135,7 @@ const Cart = () => {
               </div>
             </div>
 
-            <button onClick={() => setStep("address")}
+            <button onClick={() => handleContinue("address")}
               className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg flex items-center justify-center gap-2">
               Continue <ChevronRight className="w-4 h-4" />
             </button>
@@ -154,7 +168,7 @@ const Cart = () => {
                 <button onClick={() => navigate("/addresses")} className="w-full mt-3 py-2.5 rounded-xl text-sm font-semibold border border-border text-foreground">
                   + Add New Address
                 </button>
-                <button onClick={() => { if (!selectedAddress) { toast.error("Select an address"); return; } setStep("payment"); }}
+                <button onClick={() => { if (!selectedAddress) { toast.error("Select an address"); return; } handleContinue("payment"); }}
                   className="w-full gradient-primary text-primary-foreground font-semibold py-3.5 rounded-xl text-sm mt-4 shadow-lg flex items-center justify-center gap-2">
                   Continue to Payment <ChevronRight className="w-4 h-4" />
                 </button>
