@@ -40,6 +40,10 @@ export default function Login() {
       if (mode === "signup") {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         if (fullName) await updateProfile(cred.user, { displayName: fullName });
+        // Track registered email locally too
+        const emails = JSON.parse(localStorage.getItem("kapda_registered_emails") || "[]");
+        if (!emails.includes(email)) emails.push(email);
+        localStorage.setItem("kapda_registered_emails", JSON.stringify(emails));
         toast.success("Account created 🚀");
       } else {
         const cred = await signInWithEmailAndPassword(auth, email, password);
@@ -49,7 +53,18 @@ export default function Login() {
       login({ name: displayName || email.split("@")[0], email });
       navigate("/");
     } catch (err) {
-      toast.error(err.message);
+      const code = err?.code || "";
+      if (code === "auth/user-not-found" || code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") {
+        toast.error("Account not found. Please sign up first.");
+        setMode("signup");
+      } else if (code === "auth/wrong-password") {
+        toast.error("Incorrect password. Try again.");
+      } else if (code === "auth/email-already-in-use") {
+        toast.error("Email already registered. Please sign in.");
+        setMode("signin");
+      } else {
+        toast.error(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -57,16 +72,30 @@ export default function Login() {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!/^\+?\d{10,15}$/.test(phone.replace(/\s/g, ""))) {
+    const cleaned = phone.replace(/\s/g, "");
+    if (!/^\+?\d{10,15}$/.test(cleaned)) {
       toast.error("Enter a valid phone number");
       return;
     }
+    const formatted = cleaned.startsWith("+") ? cleaned : `+91${cleaned}`;
+    const phones = JSON.parse(localStorage.getItem("kapda_registered_phones") || "[]");
+
+    if (mode === "signin" && !phones.includes(formatted)) {
+      toast.error("Account not found. Please sign up first.");
+      setMode("signup");
+      return;
+    }
+    if (mode === "signup" && phones.includes(formatted)) {
+      toast.error("Phone already registered. Please sign in.");
+      setMode("signin");
+      return;
+    }
+
     setLoading(true);
     try {
       const code = String(Math.floor(100000 + Math.random() * 900000));
       setGeneratedOtp(code);
       setOtp("");
-      // Demo mode: show the OTP on screen instead of sending real SMS
       toast.success(`Demo OTP: ${code}`, {
         description: "In production this would be sent via SMS.",
         duration: 10000,
@@ -87,7 +116,13 @@ export default function Login() {
         toast.error("Invalid OTP. Try again.");
         return;
       }
-      const formatted = phone.startsWith("+") ? phone : `+91${phone}`;
+      const cleaned = phone.replace(/\s/g, "");
+      const formatted = cleaned.startsWith("+") ? cleaned : `+91${cleaned}`;
+      if (mode === "signup") {
+        const phones = JSON.parse(localStorage.getItem("kapda_registered_phones") || "[]");
+        if (!phones.includes(formatted)) phones.push(formatted);
+        localStorage.setItem("kapda_registered_phones", JSON.stringify(phones));
+      }
       toast.success("Phone verified ✅");
       login({ name: fullName || formatted, phone: formatted });
       navigate("/");
