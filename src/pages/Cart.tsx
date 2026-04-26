@@ -17,7 +17,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const { items, updateQty, removeItem, clearCart } = useCart();
   const { placeOrder } = useOrders();
-  const { addresses } = useUser();
+  const { addresses, isLoggedIn } = useUser();
   const [step, setStep] = useState<"cart" | "address" | "payment">("cart");
   const [selectedAddress, setSelectedAddress] = useState<string | null>(addresses[0]?.id || null);
   const [selectedPayment, setSelectedPayment] = useState("upi");
