@@ -48,11 +48,12 @@ const ProductPage = () => {
     return product.fabricPrice * fabricLength + stitchingCharge;
   };
 
-  const tabs: { key: BuyOption; label: string; icon: React.ReactNode; priceLabel: string }[] = [
+  const allTabs: { key: BuyOption; label: string; icon: React.ReactNode; priceLabel: string }[] = [
     { key: "readymade", label: "Readymade", icon: <ShoppingCart className="w-3.5 h-3.5" />, priceLabel: `₹${product.price.toLocaleString()}` },
     { key: "fabric", label: "Fabric", icon: <span className="text-sm">🧵</span>, priceLabel: `₹${product.fabricPrice.toLocaleString()}/m` },
     { key: "custom", label: "Custom Stitch", icon: <Scissors className="w-3.5 h-3.5" />, priceLabel: `₹${(product.fabricPrice + stitchingCharge).toLocaleString()}+` },
   ];
+  const tabs = product.hideFabric ? allTabs.filter((t) => t.key !== "fabric") : allTabs;
 
   const handleAddToCart = () => {
     let detail = "";

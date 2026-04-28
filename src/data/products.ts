@@ -7,6 +7,9 @@ import product6 from "@/assets/product-6.jpg";
 import product7 from "@/assets/product-7.jpg";
 import product9 from "@/assets/product-9.jpg";
 import product10 from "@/assets/product-10.jpg";
+import product11 from "@/assets/product-11.jpg";
+import product12 from "@/assets/product-12.jpg";
+import product13 from "@/assets/product-13.jpg";
 
 export interface Product {
   id: string;
@@ -22,6 +25,7 @@ export interface Product {
   rating: number;
   reviews: number;
   isCustomUpload?: boolean;
+  hideFabric?: boolean;
 }
 
 export interface Review {
@@ -145,11 +149,51 @@ export const products: Product[] = [
     originalPrice: 1199,
     image: product10,
     category: "men",
-    description: "Vibrant abstract geometric printed t-shirt. Upload your own design for custom prints!",
+    description: "Vibrant abstract geometric print on a crisp white t-shirt. Upload your own design for custom prints!",
     sizes: ["S", "M", "L", "XL", "XXL"],
     rating: 4.4,
     reviews: 142,
     isCustomUpload: true,
+    hideFabric: true,
+  },
+  {
+    id: "11",
+    name: "Cream Silk Embroidered Kurta (Men)",
+    price: 2299,
+    fabricPrice: 1149,
+    originalPrice: 3299,
+    image: product11,
+    category: "men",
+    description: "Elegant cream silk kurta with delicate gold embroidery on collar and cuffs. Festive favourite.",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    rating: 4.7,
+    reviews: 64,
+  },
+  {
+    id: "12",
+    name: "Maroon Embroidered Cotton Kurta (Men)",
+    price: 1699,
+    fabricPrice: 849,
+    originalPrice: 2399,
+    image: product12,
+    category: "men",
+    description: "Royal maroon cotton kurta with intricate white thread embroidery on the placket.",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    rating: 4.5,
+    reviews: 51,
+  },
+  {
+    id: "13",
+    name: "Sage Green Linen Kurta (Men)",
+    price: 1499,
+    fabricPrice: 749,
+    originalPrice: 2099,
+    image: product13,
+    category: "men",
+    description: "Modern sage green linen kurta with mandarin collar. Lightweight and breathable.",
+    sizes: ["S", "M", "L", "XL", "XXL"],
+    rating: 4.4,
+    reviews: 39,
   },
 ];
 
