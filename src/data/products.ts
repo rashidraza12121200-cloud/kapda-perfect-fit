@@ -7,6 +7,9 @@ import product6 from "@/assets/product-6.jpg";
 import product7 from "@/assets/product-7.jpg";
 import product9 from "@/assets/product-9.jpg";
 import product10 from "@/assets/product-10.jpg";
+import product11 from "@/assets/product-11.jpg";
+import product12 from "@/assets/product-12.jpg";
+import product13 from "@/assets/product-13.jpg";
 
 export interface Product {
   id: string;
@@ -22,6 +25,7 @@ export interface Product {
   rating: number;
   reviews: number;
   isCustomUpload?: boolean;
+  hideFabric?: boolean;
 }
 
 export interface Review {
